@@ -168,17 +168,17 @@ class CanFinish {
 }
 
 //198-m-打家劫舍:相邻偷窃会报警
-//动态规划
 class Rob {
     public int rob(int[] nums) {
-        if (nums.length == 0) return 0;
+        //dp[n]代表到第n户最高多少金额
+        //dp[n]=max(dp[n-1],dp[n-2]+nums[n-1]);
         int n = nums.length;
+        if (n == 0) return 0;
         int[] dp = new int[n + 1];
         dp[0] = 0;
         dp[1] = nums[0];
         for (int i = 2; i <= n; i++) {
-            //子问题变成2步
-            dp[i] = Math.max(dp[i - 2] + nums[i - 1], dp[i - 1]);
+            dp[i] = Math.max(dp[i - 1], dp[i - 2] + nums[i - 1]);
         }
         return dp[n];
     }
@@ -415,28 +415,20 @@ class HasCycle {
 //动态规划
 class WordBreak {
     public boolean wordBreak(String s, List<String> wordDict) {
-        int length = s.length();
-        //dp[i]表示前i个字母能否表示为wordDict中单词的组合
-        boolean[] dp = new boolean[length + 1];
-        //init wordSet
-        HashSet<String> wordSet = new HashSet<>();
-        for (String word : wordDict) {
-            wordSet.add(word);
-        }
+        //dp[n]:[0,n]的字符串是否能被 wordDict 表示出来
+        //dp[n]=dp[j]&&wordDict.contains(s.substring(j,n))
+        int len = s.length();
+        boolean[] dp = new boolean[len + 1];
         dp[0] = true;
-
-        //循环这块别搞错了 外层是j 内层是i
-        //先定j，再在j前面找是否存在匹配项
-        for (int j = 1; j <= length; j++) {
-            for (int i = 0; i < j; i++) {
-                //前i个可以被拆分，并且[i,j]是单词
-                if (dp[i] && wordSet.contains(s.substring(i, j))) {
-                    dp[j] = true;
+        for (int i = 1; i <= len; i++) {
+            for (int j = 0; j < i; j++) {
+                if (dp[j] && wordDict.contains(s.substring(j, i))) {
+                    dp[i] = true;
                     break;
                 }
             }
         }
-        return dp[length];
+        return dp[len];
     }
 }
 
@@ -548,26 +540,22 @@ class MaxPathSum {
 }
 
 //322-m-零钱兑换
-//最少的硬币个数，硬币无限量
-//dp
 class CoinChange {
     public int coinChange(int[] coins, int amount) {
-        int max = amount + 1;
-        int[] dp = new int[max];
-        Arrays.fill(dp, max);
+        //dp[n]:n的最小硬币个数
+        //dp[n]=min(dp[n],dp[n-coins[i]]+1);
+        int[] dp = new int[amount + 1];
         dp[0] = 0;
-
+        int len = coins.length;
         for (int i = 1; i <= amount; i++) {
-            for (int j = 0; j < coins.length; j++) {
-                //转移方程！！
-                if (coins[j] <= i) {
-                    dp[i] = Math.min(dp[i], dp[i - coins[j]] + 1);
+            dp[i] = Integer.MAX_VALUE;
+            for (int coin : coins) {
+                if (i - coin >= 0 && dp[i - coin] != Integer.MAX_VALUE) {
+                    dp[i] = Math.min(dp[i], dp[i - coin] + 1);
                 }
             }
         }
-
-        //看是否存在该硬币个数
-        return dp[amount] > amount ? -1 : dp[amount];
+        return dp[amount] == Integer.MAX_VALUE ? -1 : dp[amount];
     }
 }
 
@@ -1801,5 +1789,91 @@ class Permute {
                 path.remove(path.size() - 1);
             }
         }
+    }
+}
+
+//70-e-爬楼梯
+class ClimbStairs {
+    public int climbStairs(int n) {
+        if (n == 0) return 1;
+        if (n == 1) return 1;
+        if (n == 2) return 2;
+        int[] dp = new int[n + 1];
+        // dp[n]:n阶有多少种方法
+        //dp[n]=dp[n-1]+dp[n-2]
+        dp[0] = 1;
+        dp[1] = 1;
+        dp[2] = 2;
+        for (int i = 3; i < n + 1; i++) {
+            dp[i] = dp[i - 1] + dp[i - 2];
+        }
+        return dp[n];
+    }
+}
+
+//118-e-杨辉三角
+class Generate {
+    public List<List<Integer>> generate(int numRows) {
+        List<List<Integer>> res = new ArrayList<>();
+        List<Integer> row = new ArrayList<>();
+        row.add(1);
+        if (numRows == 0) return res;
+        res.add(row);
+        if (numRows == 1) return res;
+        for (int i = 2; i <= numRows; i++) {
+            row = new ArrayList<>();
+            row.add(1);
+            for (int j = 1; j < i - 1; j++) {
+                row.add(res.get(i - 2).get(j) + res.get(i - 2).get(j - 1));
+            }
+            row.add(1);
+            res.add(row);
+        }
+        return res;
+    }
+}
+
+//279-m-完全平方数
+class NumSquares {
+    public int numSquares(int n) {
+        //dp[n]:n的完全平方数的最少数量
+        //dp[n]=min(dp[n],dp[n-i*i]+1) where i \in (0,根号n)
+        //需要循环遍历得到dp[n]；因此需要双重循环
+        if (n == 0) return 0;
+        if (n == 1) return 1;
+        int[] dp = new int[n + 1];
+        dp[0] = 0;
+        dp[1] = 1;
+        for (int i = 2; i <= n; i++) {
+            dp[i] = Integer.MAX_VALUE;
+            for (int j = 1; j * j <= i; j++) {
+                dp[i] = Math.min(dp[i], dp[i - j * j] + 1);
+            }
+        }
+        return dp[n];
+    }
+}
+
+//300-m-最长递增子序列
+class lengthOfLIS {
+    public int lengthOfLIS(int[] nums) {
+        //dp[n]:以nums[n]为结尾的最长严格递增子序列的长度
+        //dp[n]=max(dp[n],dp[j]+1) where j<n && nums[j]<nums[n]
+        //dp[0…i−1] 中最长的上升子序列后面再加一个 nums[i]
+        int n = nums.length;
+        if (n == 0) return 0;
+        int[] dp = new int[n];
+        int res = 1;
+        dp[0] = 1;
+        for (int i = 1; i < n; i++) {
+            dp[i] = 1;
+            for (int j = 0; j < i; j++) {
+                if (nums[j] < nums[i]) {
+                    dp[i] = Math.max(dp[i], dp[j] + 1);
+                }
+            }
+            res = Math.max(res, dp[i]);
+        }
+        return res;
     }
 }

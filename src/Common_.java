@@ -45,6 +45,11 @@ class String_and_CharArray {
         //相互转换
         char[] cArr = s.toCharArray();
         String str = new String(cArr);
+
+        //字符串切割
+        int begin = 0;
+        int end = 1;
+        String substring = str.substring(begin, end);//[begin, end)
     }
 }
 
@@ -73,6 +78,7 @@ class List_ {
         List<Integer> list = new ArrayList<>();
         list.add(item);
         list.get(index);
+        list.contains(item);
         //创建一个有内容的list
         new ArrayList<Integer>(Arrays.asList(1, 2, 3));
         //list转化为数组
