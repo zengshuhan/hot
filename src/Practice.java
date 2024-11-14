@@ -1877,3 +1877,79 @@ class lengthOfLIS {
         return res;
     }
 }
+
+//25-h-k个一组翻转链表
+class ReverseKGroup {
+    public ListNode reverseKGroup(ListNode head, int k) {
+        ListNode dummy = new ListNode();
+        ListNode begin = dummy, over = null;
+        begin.next = head;
+        ListNode start = head, end = head;
+        while (start != null) {
+            start = begin.next;
+            end = start;
+            for (int i = 0; i < k - 1; i++) {
+                if (end == null) return dummy.next;
+                end = end.next;
+            }
+            if (end == null) return dummy.next;
+            over = end.next;
+            end.next = null;
+            begin.next = reverse(start, end);
+            start.next = over;
+            begin = start;
+        }
+        return dummy.next;
+    }
+
+    ListNode reverse(ListNode start, ListNode end) {
+        ListNode node = start;
+        ListNode pre = null;
+        ListNode tempt = null;
+        while (node != null) {
+            tempt = node.next;
+            node.next = pre;
+            pre = node;
+            node = tempt;
+        }
+        return end;
+    }
+}
+
+//23-h-合并k个升序链表
+class MergeKLists {
+    public ListNode mergeKLists(ListNode[] lists) {
+        int length = lists.length;
+        if (length == 0) return null;
+        if (length == 1) return lists[0];
+        ListNode dummy = new ListNode();
+        for (int i = 0; i < length; i++) {
+            dummy.next = mergeTwo(dummy.next, lists[i]);
+        }
+        return dummy.next;
+    }
+
+    ListNode mergeTwo(ListNode head1, ListNode head2) {
+        ListNode dummy = new ListNode();
+        ListNode node1 = head1, node2 = head2, node = dummy;
+        while (node1 != null || node2 != null) {
+            if (node1 == null) {
+                node.next = node2;
+                node2 = node2.next;
+            } else if (node2 == null) {
+                node.next = node1;
+                node1 = node1.next;
+            } else {
+                if (node1.val < node2.val) {
+                    node.next = node1;
+                    node1 = node1.next;
+                } else {
+                    node.next = node2;
+                    node2 = node2.next;
+                }
+            }
+            node = node.next;
+        }
+        return dummy.next;
+    }
+}
