@@ -1953,3 +1953,78 @@ class MergeKLists {
         return dummy.next;
     }
 }
+
+//121-e-买卖股票的最佳时机
+class MaxProfit {
+    public int maxProfit(int[] prices) {
+        if (prices.length <= 1) return 0;
+        int minPrice = Integer.MAX_VALUE, res = prices[1] - prices[0];
+        for (int i = 0; i < prices.length; i++) {
+            if (prices[i] < minPrice) {
+                minPrice = prices[i];
+            } else {
+                if (res < (prices[i] - minPrice)) {
+                    res = prices[i] - minPrice;
+                }
+            }
+        }
+        return res > 0 ? res : 0;
+    }
+}
+
+//55-m-跳跃游戏
+class CanJump {
+    public boolean canJump(int[] nums) {
+        int max = 0;
+        int len = nums.length;
+        for (int i = 0; i < len; i++) {
+            if (max >= i) {
+                max = Math.max(max, i + nums[i]);
+                if (max >= len - 1) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+}
+
+//45-m-跳跃游戏II
+class Jump {
+    public int jump(int[] nums) {
+        int max = 0;
+        int end = 0;
+        int steps = 0;
+        int len = nums.length;
+        for (int i = 0; i < len - 1; i++) {//不需要考虑最后一个位置的跳跃问题
+            max = Math.max(max, i + nums[i]);//持续更新最远位置
+            if (i == end) {//走到边界（需要跳跃的位置）
+                end = max;//将边界更新到之前找到的最远距离
+                steps++;//跳跃，但你不知道是跳跃到哪里
+            }
+        }
+        return steps;
+    }
+}
+
+//763-m-划分字母区间
+class PartitionLabels {
+    public List<Integer> partitionLabels(String s) {
+        int len = s.length();
+        int[] last = new int[26];
+        for (int i = 0; i < len; i++) {
+            last[s.charAt(i) - 'a'] = Math.max(last[s.charAt(i) - 'a'], i);
+        }
+
+        int start = 0, end = 0;
+        List<Integer> res = new ArrayList<>();
+        for (int i = 0; i < len; i++) {
+            end = Math.max(end, last[s.charAt(i) - 'a']);
+            if (i == end) {
+                res.add(end - start + 1);
+                start = end + 1;
+            }
+        }
+        return res;
+    }
+}
