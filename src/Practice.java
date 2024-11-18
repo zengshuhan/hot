@@ -214,6 +214,12 @@ class MajorityElement {
             if (num == x) count++;
         return count > nums.length / 2 ? x : 0; // 当无众数时返回 0
     }
+
+    //简易排序算法
+    public int majorityElement3(int[] nums) {
+        Arrays.sort(nums);
+        return nums[nums.length / 2];
+    }
 }
 
 //238-m-除以自身以外数组的乘积
@@ -2026,5 +2032,154 @@ class PartitionLabels {
             }
         }
         return res;
+    }
+}
+
+//416-m-分割等和子集
+class CanPartition {
+    public boolean canPartition(int[] nums) {
+        //dp[i][j]:前i个是否可以得到总和为j
+        int n = nums.length;
+        if (n < 2) return false;
+        int max = 0, sum = 0;
+        for (int i = 0; i < n; i++) {
+            sum += nums[i];
+            max = Math.max(nums[i], max);
+        }
+        if (sum % 2 == 1) return false;
+        int half = sum / 2;
+        if (max > half) return false;//全是正整数
+        //准备dp
+        boolean[][] dp = new boolean[n][half + 1];
+        //dp[][0]填true
+        for (int i = 0; i < n; i++) {
+            dp[i][0] = true;
+        }
+        //dp
+        for (int i = 1; i < n; i++) {
+            for (int j = 1; j <= half; j++) {
+                if (j >= nums[i]) {
+                    dp[i][j] = dp[i - 1][j] | dp[i - 1][j - nums[i]];
+                } else {
+                    dp[i][j] = dp[i - 1][j];
+                }
+            }
+        }
+        return dp[n - 1][half];
+    }
+}
+
+//62-m-不同路径
+class UniquePaths {
+    public int uniquePaths(int m, int n) {
+        int[][] dp = new int[m][n];
+        //初始化，左上边界都为1
+        for (int i = 0; i < m; i++) dp[i][0] = 1;//左边界
+        for (int i = 0; i < n; i++) dp[0][i] = 1;//上边界
+        //dp[i][j]=dp[i-1][j]+dp[i][j-1];
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+            }
+        }
+        return dp[m - 1][n - 1];
+    }
+}
+
+//64-m-最小路径和
+class MinPathSum {
+    public int minPathSum(int[][] grid) {
+        //dp[i][j]:从(0,0)到(i,j)的最小路径和
+        int[][] dp = new int[grid.length][grid[0].length];
+        for (int i = 0; i < dp.length; i++) {
+            for (int j = 0; j < dp[0].length; j++) {
+                if (i == 0 && j == 0) {//左上边界
+                    dp[i][j] = grid[i][j];
+                } else if (i == 0) {//左边界
+                    dp[i][j] = dp[i][j - 1] + grid[i][j];
+                } else if (j == 0) {//上边界
+                    dp[i][j] = dp[i - 1][j] + grid[i][j];
+                } else {//不在边界上
+                    dp[i][j] = Math.min(dp[i][j - 1], dp[i - 1][j]) + grid[i][j];
+                }
+            }
+        }
+        return dp[dp.length - 1][dp[0].length - 1];
+    }
+}
+
+//1143-m-最长公共子序列
+class LongestCommonSubsequence {
+    public int longestCommonSubsequence(String text1, String text2) {
+        //dp[i][j]:text1[0,i-1]和text2[0,j-1]的最长公共子序列
+        int m = text1.length();
+        int n = text2.length();
+        int[][] dp = new int[m + 1][n + 1];
+        for (int i = 1; i <= m; i++) {
+            char c1 = text1.charAt(i - 1);
+            for (int j = 1; j <= n; j++) {
+                char c2 = text2.charAt(j - 1);
+                if (c1 == c2) {//新的一个相等字符
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                } else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                }
+            }
+        }
+        return dp[m][n];
+    }
+}
+
+//72-m-编辑距离
+class MinDistance {
+    public int minDistance(String word1, String word2) {
+        //dp[i][j]:word1[0,i-1]和word2[0,j-1]的最小编辑距离
+        int m = word1.length();
+        int n = word2.length();
+        if (m * n == 0) {
+            return m + n;
+        }
+        int[][] dp = new int[m + 1][n + 1];
+        //初始化:空子串到任何子串的编辑距离
+        for (int i = 0; i <= m; i++) {
+            dp[i][0] = i;
+        }
+        for (int j = 0; j <= n; j++) {
+            dp[0][j] = j;
+        }
+        //dp
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                int left = dp[i - 1][j] + 1;//插入字符
+                int up = dp[i][j - 1] + 1;//插入字符
+                int both = dp[i - 1][j - 1];
+                if (word1.charAt(i - 1) != word2.charAt(j - 1)) {
+                    both += 1;//修改字符
+                }
+                dp[i][j] = Math.min(both, Math.min(left, up));
+            }
+        }
+        return dp[m][n];
+    }
+}
+
+//32-h-最长有效括号
+class LongestValidParentheses {
+    public int longestValidParentheses(String s) {
+        //dp[i]:以s[i]为结尾的最长有效括号长度
+        int n = s.length();
+        int[] dp = new int[n];
+        int max = 0;
+        for (int i = 1; i < n; i++) {
+            if (s.charAt(i) == ')') {//某对括号的结尾
+                if (s.charAt(i - 1) == '(') {
+                    dp[i] = (i >= 2 ? dp[i - 2] : 0) + 2;//这对括号的前部分就在旁边
+                } else if (i >= dp[i - 1] + 1 && s.charAt(i - dp[i - 1] - 1) == '(') {//可能在上一对之前
+                    dp[i] = dp[i - 1] + 2 + (i >= dp[i - 1] + 2 ? dp[i - dp[i - 1] - 2] : 0);//上一对+外面这对+外面这对左边的那一对（因为可能连上了）
+                }
+            }
+            max = Math.max(max, dp[i]);
+        }
+        return max;
     }
 }
