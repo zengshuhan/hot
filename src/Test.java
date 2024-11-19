@@ -5,6 +5,8 @@ public class Test {
         int begin = 0;
         int end = 1;
         String substring = s.substring(begin, end);//[begin, end)
-        System.out.println(substring);
+//        System.out.println(substring);
+        System.out.println(s.charAt(0));//这个charAt是从左往右处理的
     }
+
 }

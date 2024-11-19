@@ -29,22 +29,38 @@ class DailyTemperatures {
 //        return res;
 //
 //    }
+//    public int[] dailyTemperatures(int[] temperatures) {
+//        int length = temperatures.length;
+//        int[] res = new int[length];
+//        //单调栈
+//        Deque<Integer> stack = new LinkedList<>();
+//        //初始化
+//        stack.push(0);
+//        //开始单调栈更新res
+//        for (int i = 1; i < length; i++) {
+//            while (!stack.isEmpty() && temperatures[stack.peek()] < temperatures[i]) {//当前温度大于栈内温度
+//                int index = stack.pop();
+//                res[index] = i - index;
+//            }
+//            stack.push(i);
+//        }
+//        return res;
+//    }
     public int[] dailyTemperatures(int[] temperatures) {
-        int length = temperatures.length;
-        int[] res = new int[length];
-        //单调栈
-        Deque<Integer> stack = new LinkedList<>();
-        //初始化
-        stack.push(0);
-        //开始单调栈更新res
-        for (int i = 1; i < length; i++) {
-            while (!stack.isEmpty() && temperatures[stack.peek()] < temperatures[i]) {//当前温度大于栈内温度
-                int index = stack.pop();
-                res[index] = i - index;
+        Deque<Integer> monoStack = new LinkedList<>();//存index
+        int n = temperatures.length;
+        int[] answer = new int[n];
+        int top = 0;
+        // monoStack.push(0);
+        for (int i = 0; i < n; i++) {
+            while (!monoStack.isEmpty() && temperatures[monoStack.peek()] < temperatures[i]) {
+                top = monoStack.pop();
+                answer[top] = i - top;
             }
-            stack.push(i);
+            monoStack.push(i);
         }
-        return res;
+        return answer;
+
     }
 }
 
@@ -2181,5 +2197,62 @@ class LongestValidParentheses {
             max = Math.max(max, dp[i]);
         }
         return max;
+    }
+}
+
+//20-e-有效的括号
+class IsValid {
+    public boolean isValid(String s) {
+        int len = s.length();
+        if (len % 2 == 1) return false;
+        Map<Character, Character> map = new HashMap<>();
+        map.put(')', '(');
+        map.put(']', '[');
+        map.put('}', '{');
+
+        Deque<Character> stack = new LinkedList<>();
+        for (int i = 0; i < len; i++) {
+            char c = s.charAt(i);
+            if (map.containsKey(c)) {
+                if (map.isEmpty() || stack.peek() != map.get(c)) {
+                    return false;
+                }
+                stack.pop();
+            } else {
+                stack.push(c);
+            }
+        }
+        return stack.isEmpty();
+    }
+}
+
+//394-m-字符串解码
+class DecodeString {
+    public String decodeString(String s) {
+        int k = 0;//当前括号内的k值
+        Deque<StringBuilder> resStack = new LinkedList<>();//放的是外层括号内部需要拼接的字符串
+        Deque<Integer> kStack = new LinkedList<>();//栈顶放的是目前所在的括号所需要重复的次数（外部括号记录到的k值）
+        StringBuilder res = new StringBuilder();//目前括号内部的字符串
+        int len = s.length();
+        for (int i = 0; i < len; i++) {
+            char c = s.charAt(i);
+            if (c == '[') {//k和res入栈，k和res重置
+                kStack.push(k);
+                resStack.push(res);
+                k = 0;
+                res = new StringBuilder();
+            } else if (c == ']') {//解码目前部分的字符串
+                StringBuilder temp = new StringBuilder();//重复字符串
+                // k=kStack.pop();//这时候不存在k被kstack覆盖的情况
+                int curk = kStack.pop();//这块要注意一下
+                for (int j = 0; j < curk; j++) temp.append(res);
+                res = resStack.pop().append(temp);//合并
+            } else if (c >= 'a' && c <= 'z') {//遇到字母直接附加到res中
+                res.append(c);
+            } else {//数字
+                k = k * 10 + (c - '0');
+            }
+        }
+        return res.toString();
     }
 }

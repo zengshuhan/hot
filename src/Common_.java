@@ -50,6 +50,11 @@ class String_and_CharArray {
         int begin = 0;
         int end = 1;
         String substring = str.substring(begin, end);//[begin, end)
+
+        //StringBuilder
+        StringBuilder sb = new StringBuilder();
+        String sb2s = sb.toString();
+        sb.append("hi");//StringBuilder拼接
     }
 }
 
@@ -104,6 +109,11 @@ class StackAndQueue {
         queue.peek();//队头
         queue.isEmpty();
         queue.size();
+        //stack
+        Deque<Integer> stack = new LinkedList<>();
+        stack.push(item);
+        stack.pop();
+        stack.peek();//stack的头
     }
 }
 
@@ -116,3 +126,5 @@ class Trie1 {
         next = new Trie1[26];//注意一下这个构造器的写法
     }
 }
+
+
