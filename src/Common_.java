@@ -55,6 +55,7 @@ class String_and_CharArray {
         StringBuilder sb = new StringBuilder();
         String sb2s = sb.toString();
         sb.append("hi");//StringBuilder拼接
+//        sb.deleteCharAt(1);
     }
 }
 

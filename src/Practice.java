@@ -2256,3 +2256,90 @@ class DecodeString {
         return res.toString();
     }
 }
+
+//78-m-子集
+class Subsets {
+    List<List<Integer>> res = new ArrayList<>();
+    List<Integer> set = new ArrayList<>();
+
+    public List<List<Integer>> subsets(int[] nums) {
+        dfs(nums, 0);
+        return res;
+    }
+
+    void dfs(int[] nums, int curIndex) {
+        if (curIndex == nums.length) {
+            res.add(new ArrayList(set));
+            return;
+        }
+        set.add(nums[curIndex]);
+        dfs(nums, curIndex + 1);
+        set.remove(set.size() - 1);
+        dfs(nums, curIndex + 1);
+    }
+}
+
+//17-m-电话号码的字母组合
+class LetterCombinations {
+    List<String> res;
+    StringBuffer combination;
+
+    public List<String> letterCombinations(String digits) {
+        Map<Character, String> phoneMap = new HashMap<>();
+        phoneMap.put('2', "abc");
+        phoneMap.put('3', "def");
+        phoneMap.put('4', "ghi");
+        phoneMap.put('5', "jkl");
+        phoneMap.put('6', "mno");
+        phoneMap.put('7', "pqrs");
+        phoneMap.put('8', "tuv");
+        phoneMap.put('9', "wxyz");
+        combination = new StringBuffer();
+        res = new ArrayList<>();
+        if (digits.length() == 0) return res;
+        backtrack(digits, phoneMap, 0);
+        return res;
+
+    }
+
+    void backtrack(String digits, Map<Character, String> phoneMap, int index) {
+        if (index == digits.length()) {
+            res.add(combination.toString());
+            return;
+        }
+        char digit = digits.charAt(index);
+        String letters = phoneMap.get(digit);
+        for (int i = 0; i < letters.length(); i++) {
+            char letter = letters.charAt(i);
+            combination.append(letter);
+            backtrack(digits, phoneMap, index + 1);
+            combination.deleteCharAt(index);
+        }
+    }
+}
+
+//75-m-颜色分类
+class SortColors {
+    public void sortColors(int[] nums) {
+        //先把0交换到前面，再把1交换到前面
+        int slow = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] == 0) {//换0
+                swap(nums, slow, i);
+                slow++;
+            }
+        }
+        for (int i = slow; i < nums.length; i++) {
+            if (nums[i] == 1) {//换1
+                swap(nums, slow, i);
+                slow++;
+            }
+        }
+    }
+
+    void swap(int[] nums, int i, int j) {
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
+    }
+}
