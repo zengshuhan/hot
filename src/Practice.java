@@ -2343,3 +2343,32 @@ class SortColors {
         nums[j] = temp;
     }
 }
+
+//39-m-组合总和
+class CombinationSum {
+    List<List<Integer>> res;
+
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        res = new ArrayList<>();
+        dfs(candidates, target, new ArrayList<>(), 0);
+        return res;
+    }
+
+    void dfs(int[] candidates, int target, List<Integer> combine, int idx) {
+        if (idx == candidates.length) {//遍历到头
+            return;
+        }
+        if (target == 0) {//找到一个组合
+            res.add(new ArrayList<Integer>(combine));
+            return;
+        }
+        //不选择当前idx元素
+        dfs(candidates, target, combine, idx + 1);
+        //选择当前idx元素
+        if (target - candidates[idx] >= 0) {
+            combine.add(candidates[idx]);
+            dfs(candidates, target - candidates[idx], combine, idx);//可以重复选
+            combine.remove(combine.size() - 1);
+        }
+    }
+}
