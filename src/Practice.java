@@ -2372,3 +2372,79 @@ class CombinationSum {
         }
     }
 }
+
+//22-m-括号生成
+class GenerateParenthesis {
+    List<String> res;
+
+    public List<String> generateParenthesis(int n) {
+        res = new ArrayList<>();
+        backtrack(new StringBuilder(), 0, 0, n);
+        return res;
+    }
+
+    void backtrack(StringBuilder curSb, int left, int right, int n) {
+        if (curSb.length() == n * 2) {
+            res.add(curSb.toString());
+            return;
+        }
+        //左括号--数量小于n
+        if (left < n) {//注意一下判别条件
+            curSb.append('(');
+            backtrack(curSb, left + 1, right, n);
+            curSb.deleteCharAt(curSb.length() - 1);
+        }
+        //右括号--数量小于左括号
+        if (right < left) {//注意一下判别条件
+            curSb.append(')');
+            backtrack(curSb, left, right + 1, n);
+            curSb.deleteCharAt(curSb.length() - 1);
+        }
+    }
+}
+
+//215-m-数组中的第k个最大元素
+//大根堆
+class FindKthLargest {
+    public int findKthLargest(int[] nums, int k) {
+        int heapSize = nums.length;
+        buildHeap(nums, heapSize);
+        //删除前k-1个root【大根堆】
+        for (int i = 0; i < k - 1; i++) {
+            swap(nums, 0, heapSize - 1);
+            heapSize--;
+            heapify(nums, 0, heapSize);
+        }
+        return nums[0];
+    }
+
+    //建立大根堆
+    void buildHeap(int[] heap, int heapSize) {
+        //last no-leaf-->root
+        for (int i = heapSize / 2 - 1; i >= 0; i--) {
+            heapify(heap, i, heapSize);
+        }
+    }
+
+    //堆化
+    void heapify(int[] heap, int root, int heapSize) {
+        int l = root * 2 + 1, r = root * 2 + 2, max = root;
+        if (r < heapSize && heap[r] > heap[max]) {
+            max = r;
+        }
+        if (l < heapSize && heap[l] > heap[max]) {
+            max = l;
+        }
+        if (max != root) {
+            swap(heap, max, root);
+            heapify(heap, max, heapSize);
+        }
+    }
+
+    void swap(int[] nums, int i, int j) {
+        int tempt = nums[i];
+        nums[i] = nums[j];
+        nums[j] = tempt;
+    }
+
+}
