@@ -2448,3 +2448,62 @@ class FindKthLargest {
     }
 
 }
+
+//49-m-字母异位词分组
+class groupAnagrams {
+    List<List<String>> groupAnagrams(String[] strs) {
+        HashMap<String, List<String>> record = new HashMap<>();
+        for (String str : strs) {
+            char[] charArray = str.toCharArray();
+            Arrays.sort(charArray);
+            String sortedStr = new String(charArray);
+            List<String> list = record.getOrDefault(sortedStr, new ArrayList<String>());
+            list.add(str);
+            record.put(sortedStr, list);
+        }
+        return new ArrayList<>(record.values());
+    }
+}
+
+//240-m-搜索二维矩阵II
+class SearchMatrix2 {
+    public boolean searchMatrix(int[][] matrix, int target) {
+        //tag可以为左下/右上
+        //这里用左下开始作为tag=matrix[i][j]
+        int m = matrix.length;
+        int n = matrix[0].length;
+        int i = m - 1;
+        int j = 0;
+        while (i >= 0 && j < n) {
+            if (matrix[i][j] < target) {
+                j++;
+            } else if (matrix[i][j] > target) {
+                i--;
+            } else {//equal
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+
+//48-m-旋转图像
+class Rotate2 {
+    public void rotate(int[][] matrix) {
+        int n = matrix.length;
+        int[][] copy = new int[n][n];
+
+        for (int i = 0; i < n; i++) {//rotate
+            for (int j = 0; j < n; j++) {
+                copy[j][n - i - 1] = matrix[i][j];
+            }
+        }
+
+        for (int i = 0; i < n; i++) {//copy
+            for (int j = 0; j < n; j++) {
+                matrix[i][j] = copy[i][j];
+            }
+        }
+    }
+}
